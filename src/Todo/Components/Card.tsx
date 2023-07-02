@@ -31,7 +31,7 @@ export const OnProgresCard = (props: todo) => {
                 {/* header */}
                 <View className='flex-row items-center justify-between'>
                     <Texts class="text-lg font-semibold break-words flex-1" numberOfLines={2}>{title}</Texts>
-                    <IconCard iconSrc={ICONS.pencil} class="w-[40] ml-3 bg-yellow-200 p-2" style={{ tintColor: "brown" }} onPress={onPressEdit} />
+                    <IconCard iconSrc={ICONS.pencil} class="w-[40] ml-3 bg-yellow-200 p-2" style={{ tintColor: "brown" }} onPress={()=>{setisSheet(true)}} />
                 </View>
                 <Texts class={"opacity-50 text-sm font-normal"}>{createdAt}</Texts>
                 <Line class="my-2" />
@@ -57,7 +57,7 @@ export const OnProgresCard = (props: todo) => {
                 </View>
             </PressableView>
             <RBSheetModel isSheetOpen={isSheet} onClose={() => { setisSheet(false) }}>
-                <AddTaskCard onCancel={() => { setisSheet(false) }} />
+                <AddTaskCard onCancel={() => { setisSheet(false) }} propsId={uid} propsTitle={title} propsDescription={description} />
             </RBSheetModel>
         </>
     )
@@ -116,15 +116,24 @@ export const CardLoader = ()=>{
     )
 }
 
-export const AddTaskCard = (props: any) => {
+type AddTaskProps =  {
+    propsId ?: string | number | undefined
+    propsTitle ?:string | undefined
+    propsDescription ?: string | undefined
+    onCancel ?: any
+}
+
+export const AddTaskCard = (props: AddTaskProps) => {
+    const {propsId , onCancel , propsTitle , propsDescription} = props
     const { onProgressTodo, addTodo, fetchTodo }: any = useTodo()
-    const [title, settitle] = useState('')
-    const [description, setdescription] = useState('')
+    const [title, settitle] = useState(propsTitle || '')
+    const [description, setdescription] = useState(propsDescription || '')
     let _id = Math.floor(Math.random() * 100000)
     const date = new Date().toLocaleString();
     const todoData = {
         _id, title, description, date
     }
+    console.log({propsId , onCancel , propsTitle , propsDescription})
     function handleAddTodo() {
         addTodo(todoData)
         clearAllState();
@@ -150,8 +159,12 @@ export const AddTaskCard = (props: any) => {
                 <Input class="max-h-32" placeholder="Description" multiLine={true} numberOfLines={4} textAlignVertical="top" value={description} onChangeText={(e: string) => { setdescription(e) }} />
             </View>
             <View className='flex-row items-center justify-center my-1 mt-auto'>
-                <Btn class="flex-1" varient="outline" onPress={() => { clearAllState(); props.onCancel() }}>cancel</Btn>
-                <Btn class="flex-1 ml-1" onPress={() => { handleAddTodo(); props.onCancel() }}>add</Btn>
+                <Btn class="flex-1" varient="outline" onPress={() => { clearAllState();onCancel() }}>cancel</Btn>
+                {propsId ? 
+                <Btn class="flex-1 ml-1" onPress={() => { handleAddTodo(); onCancel() }}>Update</Btn>
+                :
+                <Btn class="flex-1 ml-1" onPress={() => { handleAddTodo(); onCancel() }}>add</Btn>
+                }
             </View>
         </View>
     )

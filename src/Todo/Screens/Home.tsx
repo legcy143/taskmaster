@@ -74,7 +74,7 @@ const OnProgresView = (props:any) => {
             <ScrollView horizontal={true}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
-                className='flex-col'
+                className=''
             >
                 <>
                     {onProgressTodo.length <= 0 ? <AddCardLoader onOpenAddTodo={props.onOpenAddTodo}/> :
@@ -83,7 +83,7 @@ const OnProgresView = (props:any) => {
                             {onProgressTodo.map((e: any) => {
                                 // onPressDone={()=>{handleCompleteTodo(e._id)}}
                                 return (
-                                    <OnProgresCard key={e?._id} uid={e?._id} title={e.title} createdAt={e?.createdAt} description={e?.description} timeLeft={e?.timeLeft} />
+                                    <OnProgresCard key={e?._id} uid={e?._id} title={e.title} createdAt={e?.createdAt} description={e?.description} timeLeft={e?.timeLeft} class="" />
                                 )
                             })}
 
@@ -141,7 +141,7 @@ export const UpdateTaskCard = (props: any) => {
 
 const AddCardLoader = (props: any) => {
     return (
-        <View className=" w-[90%] m-auto h-[200] flex-col items-center justify-center rounded">
+        <View className=" w-[250] m-auto h-[200] flex-col items-center justify-center rounded">
             <View className='bg-gray-200 p-5 w-[90%] h-[80%] rounded-xl flex-col items-center justify-center' style={style.shadow}>
             <Texts class="text-xl font-semibold mb-2 text-center opacity-70">no todo found</Texts>
             <Btn class="p-1 px-5" onPress={props.onOpenAddTodo}>Add task</Btn>
