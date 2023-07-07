@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, memo, useCallback } from 'react'
 import { Texts, ScreenLayout, Btn, IconCard, PressableView, Line, Input, RBSheetModel } from "../../Component/LegcyUI"
 import { ICONS } from '../../Icons/ICONS'
 import { useTodo } from '../../Supplier/Zustand/useTodo'
@@ -7,21 +7,24 @@ import { useNavigation } from '@react-navigation/native'
 import { AddTaskCard, CompletedtaskCard, OnProgresCard } from '../Components/Card'
 import { useUser } from '../../Supplier/Zustand/useUser'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Dimensions } from 'react-native';
 
 export default function Home() {
     const [isSheet, setisSheet] = useState(false)
-    const { fetchTodo }: any = useTodo()
-    const { fetchUserDetail, userDetail }: any = useUser()
+    const { isLogged, fetchUserProfile, userDetail }: any = useUser()
     useEffect(() => {
-        fetchUserDetail()
-        fetchTodo()
-    }, [])
+        if (!isLogged) {
+            console.log("Home.jsx in useeffect for fetchings")
+            fetchUserProfile()
+        }
+    }, [isLogged])
+    
 
     return (
         <ScreenLayout>
-            <HeaderNav userName={userDetail[0]?.userName} />
+            <HeaderNav userName={userDetail?.name.length>16 ? userDetail?.name.slice(0 , 15)+"...":userDetail?.name} />
             <ScrollView className='relative h-1'>
-                <OnProgresView onOpenAddTodo={()=>{setisSheet(true)}}/>
+                <OnProgresView onOpenAddTodo={() => { setisSheet(true) }} />
                 <CompletedtaskView />
             </ScrollView>
             <RBSheetModel isSheetOpen={isSheet} onClose={() => { setisSheet(false) }}>
@@ -34,6 +37,7 @@ export default function Home() {
 
 const HeaderNav = (props: any) => {
     const navigation: any = useNavigation();
+    const { logout, checkMe }: any = useUser()
     return (
         <View className='flex-row justify-between items-center h-[70] px-3'>
             <PressableView onPress={() => { navigation.push("Profile") }} class='flex-row items-center'>
@@ -66,7 +70,7 @@ const LinearHeader = (props: any) => {
     )
 }
 
-const OnProgresView = (props:any) => {
+const OnProgresView = (props: any) => {
     const { onProgressTodo }: any = useTodo()
     return (
         <View className='py-1'>
@@ -77,7 +81,7 @@ const OnProgresView = (props:any) => {
                 className=''
             >
                 <>
-                    {onProgressTodo.length <= 0 ? <AddCardLoader onOpenAddTodo={props.onOpenAddTodo}/> :
+                    {onProgressTodo.length <= 0 ? <AddCardLoader onOpenAddTodo={props.onOpenAddTodo} /> :
 
                         <>
                             {onProgressTodo.map((e: any) => {
@@ -114,7 +118,7 @@ const CompletedtaskView = () => {
 
 
 
-export const UpdateTaskCard = (props: any) => {
+export const UpdateTaskCard = memo((props: any) => {
     const { onProgressTodo }: any = useTodo()
     console.log(onProgressTodo)
     return (
@@ -136,19 +140,23 @@ export const UpdateTaskCard = (props: any) => {
             </View>
         </View>
     )
-}
+})
 
 
-const AddCardLoader = (props: any) => {
+
+
+
+const AddCardLoader = memo((props: any) => {
+    const w = Dimensions.get('window').width;
     return (
-        <View className=" w-[250] m-auto h-[200] flex-col items-center justify-center rounded">
+        <View className=" w-[250] m-auto h-[200] flex-col items-center justify-center rounded" style={{ width: w }} >
             <View className='bg-gray-200 p-5 w-[90%] h-[80%] rounded-xl flex-col items-center justify-center' style={style.shadow}>
-            <Texts class="text-xl font-semibold mb-2 text-center opacity-70">no todo found</Texts>
-            <Btn class="p-1 px-5" onPress={props.onOpenAddTodo}>Add task</Btn>
+                <Texts class="text-xl font-semibold mb-2 text-center opacity-70">no todo found</Texts>
+                <Btn class="p-1 px-5" onPress={props.onOpenAddTodo}>Add task</Btn>
             </View>
         </View>
     )
-}
+})
 
 const style = StyleSheet.create({
     shadow: {
@@ -156,12 +164,12 @@ const style = StyleSheet.create({
         shadowOffset: {
             width: 0,
             height: 3,
-          },
-          shadowOpacity:  0.18,
-          shadowRadius: 4.59,
-          elevation: 10,
+        },
+        shadowOpacity: 0.18,
+        shadowRadius: 4.59,
+        elevation: 10,
         borderColor: "rgba(0 , 0 , 0 ,0.1)",
-        borderWidth:1,
+        borderWidth: 1,
         borderStyle: "solid"
-   }
+    }
 })

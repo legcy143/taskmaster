@@ -18,3 +18,15 @@ export const getData = async (key: any) => {
   } catch (error) {
   }
 };
+
+export const removeData = async (key: any) => {
+  try {
+    const value = await AsyncStorage.removeItem(key);
+    if (value !== null || undefined) {
+      console.log("remove dta " , value , " and key => " , key)
+      return true;
+    }
+    return -1
+  } catch (error) {
+  }
+};

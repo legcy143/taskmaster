@@ -21,9 +21,6 @@ export const OnProgresCard = (props: todo) => {
     const [isSheet, setisSheet] = useState(false)
     const hanldePressDone = (id: string | number | undefined) => {
         completeTodo(id);
-        setTimeout(() => {
-            fetchTodo()
-        }, 100);
     }
     return (
         <>
@@ -31,7 +28,7 @@ export const OnProgresCard = (props: todo) => {
                 {/* header */}
                 <View className='flex-row items-center justify-between'>
                     <Texts class="text-lg font-semibold break-words flex-1" numberOfLines={2}>{title}</Texts>
-                    <IconCard iconSrc={ICONS.pencil} class="w-[40] ml-3 bg-yellow-200 p-2" style={{ tintColor: "brown" }} onPress={()=>{setisSheet(true)}} />
+                    <IconCard iconSrc={ICONS.pencil} class="w-[40] ml-3 bg-yellow-200 p-2" style={{ tintColor: "brown" }} onPress={() => { setisSheet(true) }} />
                 </View>
                 <Texts class={"opacity-50 text-sm font-normal"}>{createdAt}</Texts>
                 <Line class="my-2" />
@@ -70,9 +67,6 @@ export const CompletedtaskCard = (props: todo) => {
     const [isSheet, setisSheet] = useState(false)
     const hanleDeleteTodo = (id: string | number | undefined) => {
         deleteTodo(id);
-        setTimeout(() => {
-            fetchTodo()
-        }, 100);
         setisSheet(false)
     }
     return (
@@ -98,8 +92,8 @@ export const CompletedtaskCard = (props: todo) => {
                     <Texts class="text-lg font-semibold border-l-8 border-solid border-red-400 p-3 py-1 rounded" numberOfLines={2}>{title}</Texts>
                     <Texts class="text-lg font-semibold mt-auto" numberOfLines={3}>are you sure want to delte this</Texts>
                     <View className='flex-row items-center justify-center my-1'>
-                        <Btn class="flex-1" varient="outline" onPress={()=>{setisSheet(false)}}>no , keep</Btn>
-                        <Btn class="flex-1 ml-1" onPress={()=>{hanleDeleteTodo(uid)}}>yes , delete</Btn>
+                        <Btn class="flex-1" varient="outline" onPress={() => { setisSheet(false) }}>no , keep</Btn>
+                        <Btn class="flex-1 ml-1" onPress={() => { hanleDeleteTodo(uid) }}>yes , delete</Btn>
                     </View>
                 </View>
             </RBSheetModel>
@@ -108,23 +102,23 @@ export const CompletedtaskCard = (props: todo) => {
     )
 }
 
-export const CardLoader = ()=>{
-    return(
+export const CardLoader = () => {
+    return (
         <View>
             <Texts>hii there</Texts>
         </View>
     )
 }
 
-type AddTaskProps =  {
-    propsId ?: string | number | undefined
-    propsTitle ?:string | undefined
-    propsDescription ?: string | undefined
-    onCancel ?: any
+type AddTaskProps = {
+    propsId?: string | number | undefined
+    propsTitle?: string | undefined
+    propsDescription?: string | undefined
+    onCancel?: any
 }
 
 export const AddTaskCard = (props: AddTaskProps) => {
-    const {propsId , onCancel , propsTitle , propsDescription} = props
+    const { propsId, onCancel, propsTitle, propsDescription } = props
     const { onProgressTodo, addTodo, fetchTodo }: any = useTodo()
     const [title, settitle] = useState(propsTitle || '')
     const [description, setdescription] = useState(propsDescription || '')
@@ -133,13 +127,14 @@ export const AddTaskCard = (props: AddTaskProps) => {
     const todoData = {
         _id, title, description, date
     }
-    console.log({propsId , onCancel , propsTitle , propsDescription})
+    console.log({ propsId, onCancel, propsTitle, propsDescription })
     function handleAddTodo() {
         addTodo(todoData)
         clearAllState();
-        setTimeout(() => {
-            fetchTodo();
-        }, 1000);
+    }
+    function handleUpdateTodo() {
+        addTodo(todoData)
+        clearAllState();
     }
     const clearAllState = () => {
         settitle('');
@@ -159,11 +154,11 @@ export const AddTaskCard = (props: AddTaskProps) => {
                 <Input class="max-h-32" placeholder="Description" multiLine={true} numberOfLines={4} textAlignVertical="top" value={description} onChangeText={(e: string) => { setdescription(e) }} />
             </View>
             <View className='flex-row items-center justify-center my-1 mt-auto'>
-                <Btn class="flex-1" varient="outline" onPress={() => { clearAllState();onCancel() }}>cancel</Btn>
-                {propsId ? 
-                <Btn class="flex-1 ml-1" onPress={() => { handleAddTodo(); onCancel() }}>Update</Btn>
-                :
-                <Btn class="flex-1 ml-1" onPress={() => { handleAddTodo(); onCancel() }}>add</Btn>
+                <Btn class="flex-1" varient="outline" onPress={() => { clearAllState(); onCancel() }}>cancel</Btn>
+                {propsId ?
+                    <Btn class="flex-1 ml-1" onPress={() => { handleAddTodo(); onCancel() }}>Update</Btn>
+                    :
+                    <Btn class="flex-1 ml-1" onPress={() => { handleUpdateTodo(); onCancel() }}>add</Btn>
                 }
             </View>
         </View>

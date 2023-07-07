@@ -6,36 +6,32 @@ import { ICONS } from "../Icons/ICONS";
 
 export function ScreenLayout(props: any) {
     return (
-        <View className={`min-h-[100vh] flex-col bg-blue-50 ${props.class}`}>{props.children}</View>
+        <View className={`min-h-[100vh] flex-col bg-blue-50 ${props.class}`} style={props.style}>{props.children}</View>
     )
 }
-export function NavigationHeader(props:any) {
-    const navigation:any = useNavigation()
+export function NavigationHeader(props: any) {
+    const navigation: any = useNavigation()
     return (
         <View className={`h-[60] flex-row items-center justify-between px-1 bg-blue-100 ${props.class}`}>
-            <IconCard iconSrc={ICONS.back} onPress={()=>{navigation.goBack()}}/>
+            <IconCard iconSrc={ICONS.back} onPress={() => { navigation.goBack() }} />
             <Text className="text-black text-xl capitalize font-semibold">{props.pageName}</Text>
-            <Text className="w-[30]"></Text>
+            {props.rightTab ? props.rightTab : <Text className="w-[30]"></Text>}
         </View>
     )
 }
 
-export function Input(props: any) {
+export const Input = forwardRef((props: any , ref) =>{
     return (
-            <TextInput
-                className={`p-2 border-solid border-green-300 border-2 text-black rounded font-normal text-lg  focus:border-green-600 ${props.class}`}
-                placeholder={props.placeholder}
-                placeholderTextColor={"gray"}
-                multiline={props.multiLine}
-                numberOfLines={props.numberOfLines}
-                autoFocus={props.autoFocus}
-                value={props.value}
-                onChangeText={props.onChangeText}
-                textAlignVertical={props.textAlignVertical}
-                selectionColor="green"
-            />
+        <TextInput
+            className={`p-2 border-solid border-green-300 border-2 text-black rounded font-normal text-lg  focus:border-green-600 ${props.class}`}
+            // placeholder={props.placeholder}
+            placeholderTextColor={"gray"}
+            selectionColor="green"
+            {...props}
+            ref={ref}
+        />
     )
-}
+})
 Input.defaultProps = {
     placeholder: "Enter Text",
     multiLine: false,
@@ -61,7 +57,7 @@ export function Btn(props: any) {
             break;
     }
     return (
-        <TouchableOpacity onPress={props.onPress} onLongPress={props.onLongPress} className={` p-2 w-fit rounded border-2 border-solid border-green-500 relative flex-row items-center justify-center ${varientStyle} ${props.class}`} activeOpacity={0.7}>
+        <TouchableOpacity {...props} className={` p-2 w-fit rounded border-2 border-solid border-green-500 relative flex-row items-center justify-center ${varientStyle} ${props.class}`} activeOpacity={0.7}>
             <Text className={`text-lg font-medium capitalize text-center text-white ${varientText} ${props.textClass}`}>{props.children}</Text>
         </TouchableOpacity>
     )
@@ -69,21 +65,21 @@ export function Btn(props: any) {
 
 export function Texts(props: any) {
     return (
-        <Text className={` text-black capitalize ${props.class}`} numberOfLines={props.numberOfLines}>{props.children}</Text>
+        <Text  className={` text-black capitalize ${props.class}`} {...props}>{props.children}</Text>
     )
 }
 
 export function PressableView(props: any) {
     return (
-        <TouchableOpacity onPress={props.onPress} activeOpacity={0.7} className={` text-black ${props.class}`}>{props.children}</TouchableOpacity>
+        <TouchableOpacity activeOpacity={0.7} className={` text-black ${props.class}`} {...props}>{props.children}</TouchableOpacity>
     )
 }
 
 export const IconCard = (props: any) => {
     const navigation: any = useNavigation()
     return (
-        <TouchableOpacity onPress={props.onPress} className={`p-1 rounded-full flex items-center justify-center w-[40] aspect-square relative ${props.class}`} activeOpacity={0.7}>
-            <Image className={`w-[100%] h-[100%] object-cover`} style={{ tintColor: "black", ...props.style }} source={props.iconSrc} />
+        <TouchableOpacity className={`p-1 rounded-full flex items-center justify-center w-[40] aspect-square relative ${props.class}`} activeOpacity={0.7} {...props}>
+            <Image className={`w-[100%] h-[100%] object-cover`} style={{ tintColor: "#2c2e38", ...props.style }} source={props.iconSrc} />
             {props.label &&
                 <View className="bg-red-500 absolute top-[-1] right-[-1] rounded-full w-[20] aspect-square flex-col items-center justify-center"><Text className="text-center text-xs">{props.label}</Text></View>
             }
@@ -93,7 +89,7 @@ export const IconCard = (props: any) => {
 
 export const Line = (props: any) => {
     return (
-        <View className={`h-[1.3px] bg-black opacity-10 ${props.class}`} />
+        <View className={`h-[1.3px] bg-black opacity-10 ${props.class}`} {...props} />
     )
 }
 
@@ -111,6 +107,7 @@ export const RBSheetModel = (props: any) => {
     return (
         <>
             <RBSheet
+                {...props}
                 ref={sheetRef}
                 closeOnDragDown={true}
                 closeOnPressMask={true}
@@ -145,8 +142,8 @@ export const RBSheetModel = (props: any) => {
     )
 }
 
-export const CostumToast = (props:any)=>{
-    const {message , type} = props
+export const CostumToast = (props: any) => {
+    const { message, type } = props
     let typeStyle = 'border-green-500';
     switch (type) {
         case 'warning':
@@ -155,12 +152,12 @@ export const CostumToast = (props:any)=>{
         case 'danger':
             typeStyle = 'border-red-500';
             break;
-    
+
         default:
             typeStyle = 'border-green-500';
             break;
     }
-    return(
+    return (
         <View className={`w-[90%] bg-white border-l-4 p-3 rounded-md border-solid ${typeStyle}`}>
             <Text className="text-black text-lg">{message}</Text>
         </View>

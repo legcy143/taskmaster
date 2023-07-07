@@ -2,7 +2,7 @@ import { View, Text, ScrollView } from 'react-native'
 import React ,{useState}from 'react'
 import { Btn, IconCard, Line, NavigationHeader, PressableView, ScreenLayout, Texts } from '../../Component/LegcyUI'
 import { useTodo } from '../../Supplier/Zustand/useTodo'
-import { AddCardLoader, OnProgresCard } from '../Components/Card'
+import { OnProgresCard } from '../Components/Card'
 
 export default function OnProgressTodo() {
     const { onProgressTodo }: any = useTodo()

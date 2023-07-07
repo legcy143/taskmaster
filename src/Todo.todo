@@ -5,3 +5,12 @@
 [X][1] : scrollView to flatList
 [X][2] : view card width issue
 [X][3] : 
+
+
+>> API integration
+[x][1] : Authentication
+
+>> work left in Authentication
+[x][1] : error handling and showing error message (both on otp and get otp page)
+[x][2] : fetch profile api in backend 
+[X][3] : task feature implementation

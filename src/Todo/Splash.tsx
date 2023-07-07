@@ -1,14 +1,14 @@
 import { View, Text } from 'react-native'
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef , memo} from 'react'
 import { ScreenLayout, Texts } from '../Component/LegcyUI'
 import { Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../Supplier/Zustand/useUser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function Splash() {
-  const {fetchUserDetail ,isLogged}:any = useUser()
-  const navigation:any = useNavigation()
+const Splash = ()=>{
+  const { fetchUserDetail, isLogged, fetchUserProfile, userDetail , isLoading , isFetchedUser , fetchUserProfileRes}: any = useUser()
+  const navigation: any = useNavigation()
   const scaleValue = useRef(new Animated.Value(1)).current;
   const animatePulse = () => {
     Animated.sequence([
@@ -29,17 +29,27 @@ export default function Splash() {
 
   useEffect(() => {
     animatePulse();
-    fetchUserDetail();
   }, []);
-  
+
   useEffect(() => {
-    async function  checkAuth() {
-      let userDetail:any = await AsyncStorage.getItem("userDetail");
-      {userDetail !==null ? navigation.replace("Home") : navigation.replace("Authentication") }
+    fetchUserProfile()
+  }, []);
+  useEffect(() => {
+    // console.log("is laoding"  , isLoading , "is fetched" , isFetchedUser)
+    if (isFetchedUser) {
+      if(fetchUserProfileRes?.error){
+        // console.log("err => ",fetchUserProfileRes.error)
+        return navigation.replace("NetworkError")
+      }
+      // console.log("am i wokring")
+      try {
+        { isLogged ? navigation.replace("Home") : navigation.replace("Authentication") }
+      } catch (error) {
+        // console.log(error)        
+      }
     }
-    checkAuth()
-  }, [navigation]);
-  
+  }, [isLogged , isFetchedUser , fetchUserProfileRes]);
+
   return (
     <ScreenLayout class="relative flex-col items-center justify-center">
       <BgDot class="top-5 left-5" />
@@ -53,7 +63,7 @@ export default function Splash() {
     </ScreenLayout>
   )
 }
-
+export default memo(Splash)
 const BgDot = (props: any) => {
   const { position } = props;
   return (

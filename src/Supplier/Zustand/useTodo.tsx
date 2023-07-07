@@ -95,6 +95,9 @@ export const useTodo = create((set) => ({
     },
     // delete
     deleteTodo: async (id: number | string) => {
+        let a = await AsyncStorage.removeItem("completedTodo")
+        let b = await AsyncStorage.removeItem("onProgressTodo")
+        let c = await AsyncStorage.removeItem("userDetail")
         try {
             const completedList = await AsyncStorage.getItem("completedTodo");
             if (completedList !== null) {
