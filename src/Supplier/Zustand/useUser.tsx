@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_URL } from "../../Constants/URL";
 import axios from "axios";
 import { getData, removeData, setData } from "../LocalStorage";

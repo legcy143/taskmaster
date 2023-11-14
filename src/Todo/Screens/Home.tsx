@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
-import React, { useRef, useState, useEffect, memo, useCallback } from 'react'
+import React, { useRef, useState, useEffect, memo, useCallback ,useMemo } from 'react'
 import { Texts, ScreenLayout, Btn, IconCard, PressableView, Line, Input, RBSheetModel } from "../../Component/LegcyUI"
 import { ICONS } from '../../Icons/ICONS'
 import { useTodo } from '../../Supplier/Zustand/useTodo'
@@ -11,18 +11,20 @@ import { Dimensions } from 'react-native';
 
 export default function Home() {
     const [isSheet, setisSheet] = useState(false)
-    const { isLogged, fetchUserProfile, userDetail }: any = useUser()
+    const { isLogged, fetchUserProfile, userDetail, logout }: any = useUser()
+    const {fetchTodo , allTodos}:any = useTodo();
+
     useEffect(() => {
         if (!isLogged) {
-            console.log("Home.jsx in useeffect for fetchings")
             fetchUserProfile()
         }
+        if(allTodos.length<1){
+            fetchTodo();
+        }
     }, [isLogged])
-    
-
     return (
         <ScreenLayout>
-            <HeaderNav userName={userDetail?.name.length>16 ? userDetail?.name.slice(0 , 15)+"...":userDetail?.name} />
+            <HeaderNav userName={userDetail?.name.length > 16 ? userDetail?.name.slice(0, 15) + "..." : userDetail?.name} />
             <ScrollView className='relative h-1'>
                 <OnProgresView onOpenAddTodo={() => { setisSheet(true) }} />
                 <CompletedtaskView />
@@ -70,7 +72,7 @@ const LinearHeader = (props: any) => {
     )
 }
 
-const OnProgresView = (props: any) => {
+const OnProgresView = memo((props: any) => {
     const { onProgressTodo }: any = useTodo()
     return (
         <View className='py-1'>
@@ -81,10 +83,10 @@ const OnProgresView = (props: any) => {
                 className=''
             >
                 <>
-                    {onProgressTodo.length <= 0 ? <AddCardLoader onOpenAddTodo={props.onOpenAddTodo} /> :
+                    {onProgressTodo?.length <= 0 ? <AddCardLoader onOpenAddTodo={props.onOpenAddTodo} /> :
 
                         <>
-                            {onProgressTodo.map((e: any) => {
+                            {onProgressTodo?.map((e: any) => {
                                 // onPressDone={()=>{handleCompleteTodo(e._id)}}
                                 return (
                                     <OnProgresCard key={e?._id} uid={e?._id} title={e.title} createdAt={e?.createdAt} description={e?.description} timeLeft={e?.timeLeft} class="" />
@@ -97,7 +99,7 @@ const OnProgresView = (props: any) => {
             </ScrollView>
         </View>
     )
-}
+})
 
 const CompletedtaskView = () => {
     const { completedTodo }: any = useTodo()
@@ -115,35 +117,6 @@ const CompletedtaskView = () => {
         </View>
     )
 }
-
-
-
-export const UpdateTaskCard = memo((props: any) => {
-    const { onProgressTodo }: any = useTodo()
-    console.log(onProgressTodo)
-    return (
-        <View className="bg-white p-2 pb-8 h-full">
-            <Texts class="text-center capitalize text-2xl font-bold mb-3">add new task</Texts>
-            <Line />
-            {/* input field */}
-            <View>
-                <Texts class="text-lg font-medium">tittle Task</Texts>
-                <Input placeholder="Enter Title" autoFocus={true} />
-            </View>
-            <View className='my-3'>
-                <Texts class="text-lg font-medium">Description</Texts>
-                <Input class="max-h-32" placeholder="Description" multiLine={true} numberOfLines={4} textAlignVertical="top" />
-            </View>
-            <View className='flex-row items-center justify-center my-1 mt-auto'>
-                <Btn class="flex-1" varient="outline" onPress={props.onCancel}>cancel</Btn>
-                <Btn class="flex-1 ml-1">update</Btn>
-            </View>
-        </View>
-    )
-})
-
-
-
 
 
 const AddCardLoader = memo((props: any) => {

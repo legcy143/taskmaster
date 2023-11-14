@@ -1,13 +1,15 @@
 import { View, Text } from 'react-native'
-import React, { useCallback, useEffect, useRef , memo} from 'react'
+import React, { useCallback, useEffect, useRef, memo } from 'react'
 import { ScreenLayout, Texts } from '../Component/LegcyUI'
 import { Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../Supplier/Zustand/useUser';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTodo } from '../Supplier/Zustand/useTodo';
 
-const Splash = ()=>{
-  const { fetchUserDetail, isLogged, fetchUserProfile, userDetail , isLoading , isFetchedUser , fetchUserProfileRes}: any = useUser()
+const Splash = () => {
+  const { fetchUserDetail, isLogged, fetchUserProfile, userDetail, isFetchedUser, fetchUserProfileRes }: any = useUser()
+  const { fetchTodo }: any = useTodo()
   const navigation: any = useNavigation()
   const scaleValue = useRef(new Animated.Value(1)).current;
   const animatePulse = () => {
@@ -32,12 +34,12 @@ const Splash = ()=>{
   }, []);
 
   useEffect(() => {
-    fetchUserProfile()
+    fetchUserProfile();
+    fetchTodo()
   }, []);
   useEffect(() => {
-    // console.log("is laoding"  , isLoading , "is fetched" , isFetchedUser)
     if (isFetchedUser) {
-      if(fetchUserProfileRes?.error){
+      if (fetchUserProfileRes?.error) {
         // console.log("err => ",fetchUserProfileRes.error)
         return navigation.replace("NetworkError")
       }
@@ -48,7 +50,7 @@ const Splash = ()=>{
         // console.log(error)        
       }
     }
-  }, [isLogged , isFetchedUser , fetchUserProfileRes]);
+  }, [isLogged, isFetchedUser, fetchUserProfileRes]);
 
   return (
     <ScreenLayout class="relative flex-col items-center justify-center">

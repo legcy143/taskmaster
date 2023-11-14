@@ -16,11 +16,14 @@ type todo = {
     uid?: string | number
 }
 export const OnProgresCard = (props: todo) => {
-    const { completedTodo, completeTodo, fetchTodo }: any = useTodo()
+    const { updateTodo }: any = useTodo()
     const { title, createdAt, description, timeLeft, onPressDone, onPressEdit, uid } = props
     const [isSheet, setisSheet] = useState(false)
-    const hanldePressDone = (id: string | number | undefined) => {
-        completeTodo(id);
+    const hanldePressDone = (taskId: string | number | undefined) => {
+        updateTodo({
+            taskId,
+            status:"completed"
+        });
     }
     return (
         <>
@@ -63,10 +66,10 @@ export const OnProgresCard = (props: todo) => {
 
 export const CompletedtaskCard = (props: todo) => {
     const { title, createdAt, description, timeLeft, onPressDelete, uid } = props;
-    const { completedTodo, deleteTodo, fetchTodo }: any = useTodo()
+    const {  deleteTodo }: any = useTodo()
     const [isSheet, setisSheet] = useState(false)
-    const hanleDeleteTodo = (id: string | number | undefined) => {
-        deleteTodo(id);
+    const hanleDeleteTodo = (_id: string | number | undefined) => {
+        deleteTodo(_id);
         setisSheet(false)
     }
     return (
@@ -119,21 +122,21 @@ type AddTaskProps = {
 
 export const AddTaskCard = (props: AddTaskProps) => {
     const { propsId, onCancel, propsTitle, propsDescription } = props
-    const { onProgressTodo, addTodo, fetchTodo }: any = useTodo()
+    const {  addTodo  , updateTodo}: any = useTodo()
     const [title, settitle] = useState(propsTitle || '')
     const [description, setdescription] = useState(propsDescription || '')
-    let _id = Math.floor(Math.random() * 100000)
-    const date = new Date().toLocaleString();
     const todoData = {
-        _id, title, description, date
+        title, description
     }
-    console.log({ propsId, onCancel, propsTitle, propsDescription })
     function handleAddTodo() {
         addTodo(todoData)
         clearAllState();
     }
-    function handleUpdateTodo() {
-        addTodo(todoData)
+    function handleUpdateTodo(taskId:string|number) {
+        // updateTodo(todoData)
+        updateTodo({
+            taskId,title,description
+        })
         clearAllState();
     }
     const clearAllState = () => {
@@ -156,9 +159,9 @@ export const AddTaskCard = (props: AddTaskProps) => {
             <View className='flex-row items-center justify-center my-1 mt-auto'>
                 <Btn class="flex-1" varient="outline" onPress={() => { clearAllState(); onCancel() }}>cancel</Btn>
                 {propsId ?
-                    <Btn class="flex-1 ml-1" onPress={() => { handleAddTodo(); onCancel() }}>Update</Btn>
+                    <Btn class="flex-1 ml-1" onPress={() => { handleUpdateTodo(propsId); onCancel() }}>update</Btn>
                     :
-                    <Btn class="flex-1 ml-1" onPress={() => { handleUpdateTodo(); onCancel() }}>add</Btn>
+                    <Btn class="flex-1 ml-1" onPress={() => { handleAddTodo(); onCancel() }}>adds</Btn>
                 }
             </View>
         </View>
